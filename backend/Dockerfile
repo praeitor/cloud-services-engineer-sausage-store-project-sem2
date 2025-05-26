@@ -4,11 +4,9 @@ WORKDIR /usr/src/app
 COPY ./src ./src
 COPY *.xml ./
 RUN mvn package -Dversion.application=${VERSION}
-
 FROM amazoncorretto:17-alpine
 ARG VERSION=0.0.1-SNAPSHOT
 WORKDIR /app
-# создаём пользователя jaruser
 RUN addgroup --system jaruser \
     && adduser -S -s /bin/false -G jaruser jaruser -D -H \
     && apk add --no-cache dumb-init \
