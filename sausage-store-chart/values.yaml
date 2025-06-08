@@ -7,7 +7,6 @@ global:
 
 
 frontend:
-### В чарте frontend отсутствуют некоторые важные файлы. Поймите какие и опишите их.
   replicas: 1
   revisionHistoryLimit: 15
   strategy:
@@ -35,7 +34,7 @@ backend:
     port: "8080"
     scrape: "true"
   env:
-    postgresUri: jdbc:postgresql://postgresql:5432/sausage-store
+    postgresUri: jdbc:postgresql://postgres:5432/sausage-store
     postgresUser: store
     postgresPassword: storepassword
     reportPath: /logs/reports
@@ -92,7 +91,7 @@ backendreport:
   config:
     port: "8081"
   secret:
-    db: "mongodb://root:rootpassword@sausage-mongodb:27017"
+    db: "mongodb://root:rootpassword@mongodb:27017"
   service:
     type: ClusterIP
     port: 8081
@@ -109,10 +108,18 @@ backendreport:
       cpu: "250m"
       memory: "256Mi"
 
-
 infra:
-  postgresql:
-  ### Опишите необходимые переменные для развертывания PostgresQL в кластере Kubernetes
+  postgres:
+    auth:
+      username: store
+      password: storepassword
+      database: sausage-store
+    primary:
+      persistence:
+        enabled: true
+        size: 1Gi
+    architecture: standalone
+    containerPort: 5432
   mongodb:
     env:
       MONGO_INITDB_ROOT_USERNAME: root

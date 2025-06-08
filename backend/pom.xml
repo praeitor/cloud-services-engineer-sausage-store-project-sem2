@@ -161,7 +161,7 @@
     </dependencies>
 
     <build>
-        <finalName>sausage-store</finalName>
+        <finalName>sausage-store-${env.VERSION}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
