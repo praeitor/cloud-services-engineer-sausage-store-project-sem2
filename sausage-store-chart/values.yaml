@@ -15,7 +15,7 @@ frontend:
   service:
     port: 80
   ingress:
-    host: YOUR_STUDENT_HOSTNAME.students-projects.ru # Корректный домен будет указан в задании
+    host: praeitor.students-projects.ru
     path: /
     pathType: Prefix
   containerPort: 80
@@ -83,35 +83,31 @@ backend:
             cpu: "1"
             memory: "512Mi"
 
-backend-report:
+backendreport:
   strategy:
     type: Recreate
   image: praeitor/sausage-backend-report:latest
   imagePullPolicy: Always
   containerPort: 8081
-
   config:
     port: "8081"
-
   secret:
     db: "mongodb://root:rootpassword@sausage-mongodb:27017"
-
   service:
+    type: ClusterIP
     port: 8081
-
   hpa:
     enabled: true
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 75
-
   resources:
     requests:
       cpu: "100m"
       memory: "128Mi"
     limits:
       cpu: "250m"
-      memory: "256Mi"### Опишите значения для backend-report
+      memory: "256Mi"
 
 
 infra:
