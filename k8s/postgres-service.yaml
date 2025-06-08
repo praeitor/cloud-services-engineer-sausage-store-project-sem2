@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sausage-postgres
+  namespace: r-devops-magistracy-project-2sem-21475101
+spec:
+  selector:
+    app: sausage-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
