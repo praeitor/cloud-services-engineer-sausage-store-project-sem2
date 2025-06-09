@@ -1,0 +1,49 @@
+{{- if .Values.mongodb.init.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongodb-init
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: init-mongo
+          image: mongo:7.0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Ждём готовности Монги";
+              until mongo --host mongodb \
+                          -u "{{ .Values.mongodb.env.MONGO_INITDB_ROOT_USERNAME }}" \
+                          -p "{{ .Values.mongodb.env.MONGO_INITDB_ROOT_PASSWORD }}" \
+                          --authenticationDatabase admin \
+                          --eval "db.adminCommand('ping')"; do
+                echo "Монга пока не готова, ждём"; sleep 2;
+              done;
+              echo "Создаём пользователя";
+              mongo --host mongodb \
+                    -u "{{ .Values.mongodb.env.MONGO_INITDB_ROOT_USERNAME }}" \
+                    -p "{{ .Values.mongodb.env.MONGO_INITDB_ROOT_PASSWORD }}" \
+                    --authenticationDatabase admin \
+                    --eval '
+                      db = db.getSiblingDB("sausage-store");
+                      db.createUser({
+                        user: "{{ .Values.mongodb.env.MONGO_REPORT_USER }}",
+                        pwd: "{{ .Values.mongodb.env.MONGO_REPORT_PASSWORD }}",
+                        roles: [ { role: "readWrite", db: "sausage-store" } ]
+                      });
+                    '
+          resources:
+            requests:
+              cpu: {{ .Values.mongodb.init.resources.requests.cpu | quote }}
+              memory: {{ .Values.mongodb.init.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.mongodb.init.resources.limits.cpu | quote }}
+              memory: {{ .Values.mongodb.init.resources.limits.memory | quote }}
+{{- end }}

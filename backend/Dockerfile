@@ -3,9 +3,13 @@ ARG VERSION=0.1.0-SNAPSHOT
 FROM maven:3.8.2-openjdk-16-slim AS builder
 ARG VERSION
 WORKDIR /usr/src/app
+
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
 COPY ./src ./src
-COPY *.xml ./
-RUN mvn package -DVERSION=${VERSION} \
+
+RUN mvn clean package -DskipTests -DVERSION=${VERSION} \
     && cp target/sausage-store-${VERSION}.jar target/sausage-store.jar
 
 FROM amazoncorretto:17-alpine

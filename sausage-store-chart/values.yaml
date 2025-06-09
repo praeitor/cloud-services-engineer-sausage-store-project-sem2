@@ -12,11 +12,13 @@ frontend:
   strategy:
     type: Recreate
   service:
+    name: sausage-store-frontend
     port: 80
   ingress:
-    host: praeitor.students-projects.ru
+    host: front-praeitor.2sem.students-projects.ru
     path: /
     pathType: Prefix
+    tlsSecretName: 2sem-students-projects-wildcard-secret
   containerPort: 80
   image: praeitor/sausage-frontend:latest
   resources:
@@ -40,6 +42,7 @@ backend:
     reportPath: /logs/reports
     logPath: /logs
   service:
+    name: sausage-store-backend
     port: 8080
   revisionHistoryLimit: 15
   replicas: 1
@@ -71,7 +74,7 @@ backend:
   vpa:
     enabled: true
     updatePolicy:
-      updateMode: "Auto"
+      updateMode: "Off"
     resourcePolicy:
       containerPolicies:
         - containerName: "*"
@@ -124,4 +127,15 @@ infra:
     env:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_REPORT_USER: reports
+      MONGO_REPORT_PASSWORD: reportspassword
+    init:
+      enabled: true
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+        limits:
+          cpu: "50m"
+          memory: "128Mi"
     containerPort: 27017
