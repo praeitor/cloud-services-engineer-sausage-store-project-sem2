@@ -27,7 +27,7 @@ frontend:
       cpu: "100m"
     limits:
       memory: "128Mi"
-      cpu: "1"
+      cpu: "250m"
   nginxConf: nginx.conf
 
 backend:
@@ -59,7 +59,7 @@ backend:
       cpu: "100m"
     limits:
       memory: "512Mi"
-      cpu: "1"
+      cpu: "500m"
   containerPort: 8080
   livenessProbe:
   livenessProbe:
@@ -127,15 +127,7 @@ infra:
     env:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: sausage-store
       MONGO_REPORT_USER: reports
       MONGO_REPORT_PASSWORD: reportspassword
-    init:
-      enabled: true
-      resources:
-        requests:
-          cpu: "50m"
-          memory: "64Mi"
-        limits:
-          cpu: "50m"
-          memory: "128Mi"
     containerPort: 27017
