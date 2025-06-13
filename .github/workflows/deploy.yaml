@@ -123,4 +123,4 @@ jobs:
               --namespace $SAUSAGE_STORE_NAMESPACE \
               --set-string backend.image_tag="latest" \
               --set-string frontend.image_tag="latest" \
-              --set-string backend-report.image_tag="latest"
+              --set-string backendreport.image_tag="latest"
