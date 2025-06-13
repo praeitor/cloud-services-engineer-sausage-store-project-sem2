@@ -99,28 +99,25 @@ jobs:
       needs: add_helm_chart_to_nexus
 
       steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+        - name: Install Helm
+          uses: azure/setup-helm@v1
+          with:
+            version: v3.18.2
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: '1.28.0'
+        - name: Setup kubeconfig
+          run: |
+            mkdir -p ~/.kube
+            echo "${KUBE_CONFIG}" > ~/.kube/config
+            chmod 600 ~/.kube/config
 
-      - name: Setup kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${KUBE_CONFIG}" > ~/.kube/config
-          chmod 600 ~/.kube/config
-
-      - name: Deploy Helm Chart
-        run: |
-          helm upgrade --install sausage-store sausage-store-chart \
-            --namespace $SAUSAGE_STORE_NAMESPACE \
-            --create-namespace \
-            --set backend.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend \
-            --set frontend.image.repository=${{ secrets.DOCKER_USER }}/sausage-frontend \
-            --set backendReport.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend-report \
-            --set backend.image.tag=latest \
-            --set frontend.image.tag=latest \
-            --set backendReport.image.tag=latest
+        - name: Deploy Helm Chart
+          run: |
+            helm upgrade --install sausage-store sausage-store-chart \
+              --namespace $SAUSAGE_STORE_NAMESPACE \
+              --create-namespace \
+              --set backend.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend \
+              --set frontend.image.repository=${{ secrets.DOCKER_USER }}/sausage-frontend \
+              --set backendReport.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend-report \
+              --set backend.image.tag=latest \
+              --set frontend.image.tag=latest \
+              --set backendReport.image.tag=latest
