@@ -11,7 +11,6 @@ env:
   NEXUS_HELM_REPO_PASSWORD: ${{ secrets.NEXUS_HELM_REPO_PASSWORD }}
   SAUSAGE_STORE_NAMESPACE: ${{ secrets.SAUSAGE_STORE_NAMESPACE }}
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-  # VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
 
 jobs:
   build_and_push_to_docker_hub:
@@ -112,7 +111,7 @@ jobs:
 
         - name: Deploy Helm Chart
           run: |
-            helm upgrade --install sausage-store chartmuseum/sausage-store-chart \
+            helm upgrade --install sausage-store chartmuseum/praeitor-sausage-stror \
               --namespace $SAUSAGE_STORE_NAMESPACE \
               --create-namespace \
               --set backend.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend \
