@@ -121,9 +121,6 @@ jobs:
             helm upgrade --install sausage-store chartmuseum/sausage-store-chart \
               --version ${{ needs.add_helm_chart_to_nexus.outputs.chart_version }} \
               --namespace $SAUSAGE_STORE_NAMESPACE \
-              --set backend.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend \
-              --set frontend.image.repository=${{ secrets.DOCKER_USER }}/sausage-frontend \
-              --set backendreport.image.repository=${{ secrets.DOCKER_USER }}/sausage-backend-report \
-              --set backend.image.tag=latest \
-              --set frontend.image.tag=latest \
-              --set backendreport.image.tag=latest
+              --set-string backend.image_tag="latest" \
+              --set-string frontend.image_tag="latest" \
+              --set-string backend-report.image_tag="latest"
