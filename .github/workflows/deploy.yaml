@@ -17,8 +17,6 @@ jobs:
   build_and_push_to_docker_hub:
       name: Push Docker image to DockerHub
       runs-on: ubuntu-latest
-      outputs:
-        DATE: ${{ steps.get-date.outputs.DATE }}
       steps:
         - name: Check out the repo
           uses: actions/checkout@v3
@@ -43,6 +41,7 @@ jobs:
             context: ./frontend/
             push: true
             tags: ${{ secrets.DOCKER_USER }}/sausage-frontend:latest
+
         - name: Push Backend-report to DockerHub
           uses: docker/build-push-action@v4
           with:
