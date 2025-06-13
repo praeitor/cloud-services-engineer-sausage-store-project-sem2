@@ -55,15 +55,40 @@ helm upgrade --install sausage-store chartmuseum/sausage-store-chart \\
 
 ```
 sausage-store/
-├── backend/
-├── frontend/
-├── backend-report/
-├── sausage-store-chart/
-│   ├── charts/
-│   ├── templates/
-│   └── values.yaml
 ├── .github/workflows/
 │   └── deploy.yaml
+├── backend/
+├── backend-report/
+├── frontend/
+├── sausage-store-chart/
+├── charts
+│   ├── backend
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── configmap.yaml
+│   │       ├── deployment.yaml
+│   │       └── service.yaml
+│   ├── backendreport
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── _helpers.tpl
+│   │       ├── deployment.yaml
+│   │       └── service.yaml
+│   ├── frontend
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── configmap.yaml
+│   │       ├── deployment.yaml
+│   │       ├── ingress.yaml
+│   │       └── service.yaml
+│   ├── infra
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── mongodb.yaml
+│   │       └── postgres.yaml
+│   └── values.yaml
+├── LICENSE
+└── README.md
 ```
 
 ---
@@ -76,8 +101,7 @@ sausage-store/
 - `NEXUS_HELM_REPO_USER`
 - `NEXUS_HELM_REPO_PASSWORD`
 - `KUBE_CONFIG`
-- `VAULT_HOST`
-- `VAULT_TOKEN`
+- `SAUSAGE_STORE_NAMESPACE`
 
 ---
 
@@ -89,13 +113,6 @@ sausage-store/
 - `frontend`
 - `backend-report`
 - `infra` (PostgreSQL, MongoDB)
-
----
-
-## Тестирование
-
-- Запуск юнит-тестов на стадии `build`
-- Проверка успешного деплоя в кластер
 
 ---
 
