@@ -1,38 +1,121 @@
-# Sausage Store
+# Sausage Store — Магазин колбасок
+![Deploy Workflow](https://github.com/praeitor/cloud-services-engineer-sausage-store-project-sem2/actions/workflows/deploy.yaml/badge.svg?branch=main)
 
-![image](https://user-images.githubusercontent.com/9394918/121517767-69db8a80-c9f8-11eb-835a-e98ca07fd995.png)
+Учебный проект в рамках курса DevOps-мастера (2 семестр), реализованный с применением современных инструментов контейнеризации, CI/CD и мониторинга.
 
+## Стек технологий
 
-## Technologies used
+- **Backend:** Spring Boot (Java)
+- **Frontend:** Vue.js
+- **Reporting:** Backend-report на Python
+- **База данных:** PostgreSQL, MongoDB
+- **CI/CD:** GitHub Actions + Helm + Docker
+- **Kubernetes:** Деплой в кластер с Helm-чартами
+- **Хранилище секретов:** Vault (under construction)
 
-* Frontend – TypeScript, Angular.
-* Backend  – Java 16, Spring Boot, Spring Data.
-* Database – H2.
+---
 
-## Installation guide
-### Backend
+## Развертывание
 
-Install Java 16 and maven and run:
+### 1. Требования
 
-```bash
-cd backend
-mvn package
-cd target
-java -jar sausage-store-0.0.1-SNAPSHOT.jar
+- Установлен `kubectl` и доступ к кластеру
+- Helm v3.14+
+- Доступ к Nexus (ChartMuseum) и Docker Hub
+
+### 2. CI/CD через GitHub Actions
+
+```yaml
+on:
+  push:
+    branches:
+      - main
 ```
 
-### Frontend
+- Сборка образов и пуш в DockerHub
+- Версионирование Helm-чарта и отправка в Nexus
+- Автоматический деплой в Kubernetes
 
-Install NodeJS and npm on your computer and run:
+### 3. Деплой вручную
 
 ```bash
-cd frontend
-npm install
-npm run build
-npm install -g http-server
-sudo http-server ./dist/frontend/ -p 80 --proxy http://localhost:8080
+helm upgrade --install sausage-store chartmuseum/sausage-store-chart \\
+  --namespace <namespace> \\
+  --set backend.image.repository=<dockerhub>/sausage-backend \\
+  --set backend.image.tag=latest \\
+  --set frontend.image.repository=<dockerhub>/sausage-frontend \\
+  --set frontend.image.tag=latest \\
+  --set backendreport.image.repository=<dockerhub>/sausage-backend-report \\
+  --set backendreport.image.tag=latest
 ```
 
-Then open your browser and go to [http://localhost](http://localhost)
+---
 
+## Структура проекта
 
+```
+sausage-store/
+├── .github/workflows/
+│   └── deploy.yaml
+├── backend/
+├── backend-report/
+├── frontend/
+├── sausage-store-chart/
+├── charts
+│   ├── backend
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── configmap.yaml
+│   │       ├── deployment.yaml
+│   │       └── service.yaml
+│   ├── backendreport
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── _helpers.tpl
+│   │       ├── deployment.yaml
+│   │       └── service.yaml
+│   ├── frontend
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── configmap.yaml
+│   │       ├── deployment.yaml
+│   │       ├── ingress.yaml
+│   │       └── service.yaml
+│   ├── infra
+│   │   ├── Chart.yaml
+│   │   └── templates
+│   │       ├── mongodb.yaml
+│   │       └── postgres.yaml
+│   └── values.yaml
+├── LICENSE
+└── README.md
+```
+
+---
+
+## Secrets (GitHub)
+
+- `DOCKER_USER`
+- `DOCKER_PASSWORD`
+- `NEXUS_HELM_REPO`
+- `NEXUS_HELM_REPO_USER`
+- `NEXUS_HELM_REPO_PASSWORD`
+- `KUBE_CONFIG`
+- `SAUSAGE_STORE_NAMESPACE`
+
+---
+
+## Helm-чарт
+
+Единый чарт `sausage-store-chart` управляет:
+
+- `backend`
+- `frontend`
+- `backend-report`
+- `infra` (PostgreSQL, MongoDB)
+
+---
+
+## Авторы
+
+- Денис Булгаков
