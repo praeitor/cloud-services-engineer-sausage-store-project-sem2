@@ -73,6 +73,9 @@ jobs:
               --password="${{ env.NEXUS_HELM_REPO_PASSWORD }}"
             helm repo update
 
+        - name: Lint Helm Chart
+          run: helm lint ./sausage-store-chart
+
         - name: Assign Helm chart version
           id: versioning
           run: |
@@ -102,10 +105,6 @@ jobs:
           uses: azure/setup-helm@v1
           with:
             version: v3.18.2
-
-        - name: Lint Helm Chart
-          run: |
-              helm lint ./sausage-store-chart
 
         - name: Setup kubeconfig
           run: |
