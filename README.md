@@ -11,7 +11,6 @@
 - **База данных:** PostgreSQL, MongoDB
 - **CI/CD:** GitHub Actions + Helm + Docker
 - **Kubernetes:** Деплой в кластер с Helm-чартами
-- **Хранилище секретов:** Vault (under construction)
 
 ---
 
